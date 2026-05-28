@@ -1,0 +1,10 @@
+[package]
+name = "conservation-spectral-core"
+version = "0.1.0"
+edition = "2021"
+description = "Conservation Spectral SDK — Rust core for spectral graph analysis"
+
+[dependencies]
+nalgebra = "0.33"
+
+[dev-dependencies]

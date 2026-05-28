@@ -274,11 +274,40 @@ fn test_lanczos_returns_results() {
     let g = build_chord_graph();
     let lap = laplacian::build_laplacian_from_graph(&g, LaplacianType::Unnormalized);
 
-    // Lanczos should return k eigenvalues
-    let result = eigen::lanczos_iteration(&lap.matrix, 5, 3, 20);
-    assert_eq!(result.eigenvalues.len(), 3);
-    // Note: Lanczos needs numerical debugging for production use
-    // Jacobi eigendecomposition is the recommended solver for small graphs
+    // Get reference eigenvalues from Jacobi (full eigendecomposition)
+    let ref_eigen = eigen::eigendecompose(&lap);
+
+    // Lanczos should return k eigenvalues matching Jacobi
+    let result = eigen::lanczos_iteration(&lap.matrix, 5, 5, 20);
+    assert_eq!(result.eigenvalues.len(), 5);
+
+    // All eigenvalues should be non-negative (PSD matrix)
+    for (i, &ev) in result.eigenvalues.iter().enumerate() {
+        assert!(
+            ev >= -1e-6,
+            "Lanczos eigenvalue {} = {} (should be >= 0)",
+            i, ev
+        );
+    }
+
+    // Smallest eigenvalue should be ~0 (graph Laplacian property)
+    assert!(
+        result.eigenvalues[0].abs() < 1e-6,
+        "Smallest Lanczos eigenvalue = {} (should be ~0)",
+        result.eigenvalues[0]
+    );
+
+    // Eigenvalues should match Jacobi reference within tolerance
+    for i in 0..5 {
+        assert!(
+            (result.eigenvalues[i] - ref_eigen.eigenvalues[i]).abs() < 1e-6,
+            "Lanczos eigenvalue[{}] = {} differs from Jacobi {} by {}",
+            i,
+            result.eigenvalues[i],
+            ref_eigen.eigenvalues[i],
+            (result.eigenvalues[i] - ref_eigen.eigenvalues[i]).abs()
+        );
+    }
 }
 
 #[test]

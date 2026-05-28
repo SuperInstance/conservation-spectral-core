@@ -104,8 +104,13 @@ pub fn lanczos_iteration(
     let mut alpha = vec![0.0; m];
     let mut beta = vec![0.0; m];
 
-    // q[0] = random start, normalized
-    q[0] = (0..n).map(|i| (i as f64 + 1.0) / (n as f64).sqrt()).collect();
+    // q[0] = deterministic start, normalized to unit length
+    let mut q0: Vec<f64> = (0..n).map(|i| i as f64 + 1.0).collect();
+    let norm: f64 = q0.iter().map(|x| x * x).sum::<f64>().sqrt();
+    for x in q0.iter_mut() {
+        *x /= norm;
+    }
+    q[0] = q0;
 
     let mut iterations = 0usize;
 

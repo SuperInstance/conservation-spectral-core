@@ -2,7 +2,12 @@
 name = "conservation-spectral-core"
 version = "0.1.0"
 edition = "2021"
-description = "Conservation Spectral SDK — Rust core for spectral graph analysis"
+authors = ["SuperInstance"]
+description = "Spectral analysis of tension graphs for anomaly detection, fingerprinting, and structural health"
+license = "MIT"
+repository = "https://github.com/SuperInstance/conservation-spectral-core"
+keywords = ["spectral", "graph", "laplacian", "conservation", "eigenvalue"]
+categories = ["mathematics", "science", "data-structures"]
 
 [dependencies]
 nalgebra = "0.33"
